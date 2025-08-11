@@ -11,12 +11,11 @@
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <!-- Babel for JSX -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <!-- Recharts -->
-  <script src="https://unpkg.com/recharts@2.12.7/umd/recharts.min.js"></script>
+  <!-- Recharts (versión 1.x compatible UMD) -->
+  <script src="https://unpkg.com/recharts@1.8.5/umd/Recharts.min.js"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@0.323.0/dist/umd/lucide.min.js"></script>
   <style>
-    /* Ensure the app takes full height */
     body {
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -28,8 +27,8 @@
 </head>
 <body>
   <div id="root"></div>
-
-  <script type="text/babel">// Compound Interest Calculator Component
+  <script type="text/babel">
+    // Calculadora de Interés Compuesto
     const CompoundInterestCalculator = () => {
       const [inputs, setInputs] = React.useState({
         initialAmount: 10000,
@@ -41,10 +40,10 @@
 
       const [activeTab, setActiveTab] = React.useState('calculator');
 
-    // Inicializar Lucide después de renderizar
-    React.useEffect(() => {
-      Lucide.createIcons();
-    }, [activeTab]);
+      // Inicializar Lucide después de cada render de pestaña
+      React.useEffect(() => {
+        Lucide.createIcons();
+      }, [activeTab]);
 
       const formatCurrency = (amount) => {
         return new Intl.NumberFormat('es-ES', {
@@ -147,6 +146,9 @@
         { name: 'Capital Aportado', value: calculations.totalContributed, color: '#94a3b8' },
         { name: 'Intereses Generados', value: calculations.totalInterest, color: '#3b82f6' }
       ];
+
+      // Usar window.Recharts para la versión UMD 1.x
+      const { ResponsiveContainer, AreaChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Area, Line, BarChart, Bar, PieChart, Pie, Cell } = window.Recharts;
 
       return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
@@ -381,17 +383,17 @@
                         Evolución de la Inversión
                       </h3>
                       <div className="h-96">
-                        <Recharts.ResponsiveContainer width="100%" height="100%">
-                          <Recharts.AreaChart data={calculations.data}>
-                            <Recharts.CartesianGrid strokeDasharray="3 3" />
-                            <Recharts.XAxis dataKey="year" />
-                            <Recharts.YAxis tickFormatter={(value) => formatNumber(value)} />
-                            <Recharts.Tooltip
+                        <ResponsiveContainer width="100%" height="100%">
+                          <AreaChart data={calculations.data}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="year" />
+                            <YAxis tickFormatter={formatNumber} />
+                            <Tooltip
                               formatter={(value, name) => [formatCurrency(value), name]}
-                              labelFormatter={(label) => `Año ${label}`}
+                              labelFormatter={label => `Año ${label}`}
                             />
-                            <Recharts.Legend />
-                            <Recharts.Area
+                            <Legend />
+                            <Area
                               type="monotone"
                               dataKey="totalContributed"
                               stackId="1"
@@ -399,7 +401,7 @@
                               fill="#10b981"
                               name="Capital Aportado"
                             />
-                            <Recharts.Area
+                            <Area
                               type="monotone"
                               dataKey="interestEarned"
                               stackId="1"
@@ -407,57 +409,56 @@
                               fill="#3b82f6"
                               name="Intereses Generados"
                             />
-                            <Recharts.Line
+                            <Line
                               type="monotone"
                               dataKey="realValue"
                               stroke="#f59e0b"
                               strokeDasharray="5 5"
                               name="Valor Real (Ajustado por Inflación)"
                             />
-                          </Recharts.AreaChart>
-                        </Recharts.ResponsiveContainer>
+                          </AreaChart>
+                        </ResponsiveContainer>
                       </div>
                     </div>
-
                     {/* Detailed Evolution */}
                     <div className="bg-white rounded-xl shadow-lg p-6">
                       <h3 className="text-xl font-semibold text-gray-800 mb-4">
                         Crecimiento Anual Detallado
                       </h3>
                       <div className="h-96">
-                        <Recharts.ResponsiveContainer width="100%" height="100%">
-                          <Recharts.LineChart data={calculations.data}>
-                            <Recharts.CartesianGrid strokeDasharray="3 3" />
-                            <Recharts.XAxis dataKey="year" />
-                            <Recharts.YAxis tickFormatter={(value) => formatNumber(value)} />
-                            <Recharts.Tooltip
+                        <ResponsiveContainer width="100%" height="100%">
+                          <LineChart data={calculations.data}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="year" />
+                            <YAxis tickFormatter={formatNumber} />
+                            <Tooltip
                               formatter={(value, name) => [formatCurrency(value), name]}
-                              labelFormatter={(label) => `Año ${label}`}
+                              labelFormatter={label => `Año ${label}`}
                             />
-                            <Recharts.Legend />
-                            <Recharts.Line
+                            <Legend />
+                            <Line
                               type="monotone"
                               dataKey="totalValue"
                               stroke="#3b82f6"
                               strokeWidth={3}
                               name="Valor Total"
                             />
-                            <Recharts.Line
+                            <Line
                               type="monotone"
                               dataKey="totalContributed"
                               stroke="#10b981"
                               strokeWidth={2}
                               name="Capital Aportado"
                             />
-                            <Recharts.Line
+                            <Line
                               type="monotone"
                               dataKey="interestEarned"
                               stroke="#f59e0b"
                               strokeWidth={2}
                               name="Intereses Acumulados"
                             />
-                          </Recharts.LineChart>
-                        </Recharts.ResponsiveContainer>
+                          </LineChart>
+                        </ResponsiveContainer>
                       </div>
                     </div>
                   </div>
@@ -470,19 +471,19 @@
                         Comparación de Escenarios de Rentabilidad
                       </h3>
                       <div className="h-96">
-                        <Recharts.ResponsiveContainer width="100%" height="100%">
-                          <Recharts.BarChart data={scenarioData}>
-                            <Recharts.CartesianGrid strokeDasharray="3 3" />
-                            <Recharts.XAxis dataKey="name" />
-                            <Recharts.YAxis tickFormatter={(value) => formatNumber(value)} />
-                            <Recharts.Tooltip
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart data={scenarioData}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="name" />
+                            <YAxis tickFormatter={formatNumber} />
+                            <Tooltip
                               formatter={(value, name) => [formatCurrency(value), name]}
                             />
-                            <Recharts.Legend />
-                            <Recharts.Bar dataKey="totalContributed" fill="#94a3b8" name="Capital Aportado" />
-                            <Recharts.Bar dataKey="interest" fill="#3b82f6" name="Intereses Generados" />
-                          </Recharts.BarChart>
-                        </Recharts.ResponsiveContainer>
+                            <Legend />
+                            <Bar dataKey="totalContributed" fill="#94a3b8" name="Capital Aportado" />
+                            <Bar dataKey="interest" fill="#3b82f6" name="Intereses Generados" />
+                          </BarChart>
+                        </ResponsiveContainer>
                       </div>
                     </div>
                     <div className="grid md:grid-cols-3 gap-4">
@@ -527,9 +528,9 @@
                       </h3>
                       <div className="grid md:grid-cols-2 gap-6">
                         <div className="h-80">
-                          <Recharts.ResponsiveContainer width="100%" height="100%">
-                            <Recharts.PieChart>
-                              <Recharts.Pie
+                          <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                              <Pie
                                 data={pieData}
                                 cx="50%"
                                 cy="50%"
@@ -540,12 +541,12 @@
                                 dataKey="value"
                               >
                                 {pieData.map((entry, index) => (
-                                  <Recharts.Cell key={`cell-${index}`} fill={entry.color} />
+                                  <Cell key={`cell-${index}`} fill={entry.color} />
                                 ))}
-                              </Recharts.Pie>
-                              <Recharts.Tooltip formatter={(value) => formatCurrency(value)} />
-                            </Recharts.PieChart>
-                          </Recharts.ResponsiveContainer>
+                              </Pie>
+                              <Tooltip formatter={value => formatCurrency(value)} />
+                            </PieChart>
+                          </ResponsiveContainer>
                         </div>
                         <div className="flex flex-col justify-center space-y-4">
                           <div className="p-4 bg-gray-50 rounded-lg">
