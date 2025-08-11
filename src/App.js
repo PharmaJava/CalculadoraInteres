@@ -9,9 +9,14 @@ export function CompoundInterestCalculator() {
 
   const [activeTab, setActiveTab] = React.useState('calculator');
 
+  // Inicializar íconos de Lucide solo al montar el componente
   React.useEffect(() => {
-    window.Lucide && window.Lucide.createIcons();
-  }, [activeTab]);
+    if (window.Lucide) {
+      window.Lucide.createIcons();
+    } else {
+      console.warn('Lucide no está cargado. Asegúrate de incluir el script de Lucide en index.html.');
+    }
+  }, []);
 
   function formatCurrency(amount) {
     return new Intl.NumberFormat('es-ES', {
@@ -112,7 +117,8 @@ export function CompoundInterestCalculator() {
     { name: 'Intereses Generados', value: calculations.totalInterest, color: '#3b82f6' }
   ];
 
-  // Acceso a los componentes de Recharts del bundle UMD
+  // Acceso a los componentes de Recharts del bundle UMD con verificación
+  const Recharts = window.Recharts || {};
   const {
     ResponsiveContainer,
     AreaChart,
@@ -129,9 +135,8 @@ export function CompoundInterestCalculator() {
     PieChart,
     Pie,
     Cell
-  } = window.Recharts || {};
+  } = Recharts;
 
-  // El return es igual al JSX que ya tienes en versiones anteriores
   return (
     React.createElement('div', { className: "min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4" },
       React.createElement('div', { className: "max-w-7xl mx-auto" },
@@ -167,7 +172,6 @@ export function CompoundInterestCalculator() {
             React.createElement('div', { className: "bg-white rounded-xl shadow-lg p-6 sticky top-4" },
               React.createElement('h3', { className: "text-xl font-semibold text-gray-800 mb-4" }, "Parámetros de Inversión"),
               React.createElement('div', { className: "space-y-4" },
-                // Capital Inicial
                 React.createElement('div', null,
                   React.createElement('label', { className: "block text-sm font-medium text-gray-700 mb-2" }, "Capital Inicial (€)"),
                   React.createElement('input', {
@@ -178,7 +182,6 @@ export function CompoundInterestCalculator() {
                     min: "0"
                   })
                 ),
-                // Aportación Mensual
                 React.createElement('div', null,
                   React.createElement('label', { className: "block text-sm font-medium text-gray-700 mb-2" }, "Aportación Mensual (€)"),
                   React.createElement('input', {
@@ -189,7 +192,6 @@ export function CompoundInterestCalculator() {
                     min: "0"
                   })
                 ),
-                // Rentabilidad Anual
                 React.createElement('div', null,
                   React.createElement('label', { className: "block text-sm font-medium text-gray-700 mb-2" }, "Rentabilidad Anual (%)"),
                   React.createElement('input', {
@@ -202,7 +204,6 @@ export function CompoundInterestCalculator() {
                   }),
                   React.createElement('p', { className: "text-xs text-gray-500 mt-1" }, "Fondos indexados S&P 500: ~7-10% histórico")
                 ),
-                // Período
                 React.createElement('div', null,
                   React.createElement('label', { className: "block text-sm font-medium text-gray-700 mb-2" }, "Período (años)"),
                   React.createElement('input', {
@@ -214,7 +215,6 @@ export function CompoundInterestCalculator() {
                     max: "50"
                   })
                 ),
-                // Inflación
                 React.createElement('div', null,
                   React.createElement('label', { className: "block text-sm font-medium text-gray-700 mb-2" }, "Inflación Anual (%)"),
                   React.createElement('input', {
@@ -234,9 +234,7 @@ export function CompoundInterestCalculator() {
           React.createElement('div', { className: "lg:col-span-2" },
             activeTab === 'calculator' && (
               React.createElement('div', { className: "space-y-6" },
-                // Métricas clave
                 React.createElement('div', { className: "grid md:grid-cols-2 xl:grid-cols-4 gap-4" },
-                  // Valor Final
                   React.createElement('div', { className: "bg-white rounded-xl shadow-lg p-6" },
                     React.createElement('div', { className: "flex items-center justify-between" },
                       React.createElement('div', null,
@@ -248,7 +246,6 @@ export function CompoundInterestCalculator() {
                       )
                     )
                   ),
-                  // Total Aportado
                   React.createElement('div', { className: "bg-white rounded-xl shadow-lg p-6" },
                     React.createElement('div', { className: "flex items-center justify-between" },
                       React.createElement('div', null,
@@ -260,7 +257,6 @@ export function CompoundInterestCalculator() {
                       )
                     )
                   ),
-                  // Intereses
                   React.createElement('div', { className: "bg-white rounded-xl shadow-lg p-6" },
                     React.createElement('div', { className: "flex items-center justify-between" },
                       React.createElement('div', null,
@@ -272,7 +268,6 @@ export function CompoundInterestCalculator() {
                       )
                     )
                   ),
-                  // ROI Total
                   React.createElement('div', { className: "bg-white rounded-xl shadow-lg p-6" },
                     React.createElement('div', { className: "flex items-center justify-between" },
                       React.createElement('div', null,
@@ -285,7 +280,6 @@ export function CompoundInterestCalculator() {
                     )
                   )
                 ),
-                // Análisis clave
                 React.createElement('div', { className: "bg-white rounded-xl shadow-lg p-6" },
                   React.createElement('h3', { className: "text-xl font-semibold text-gray-800 mb-4 flex items-center" },
                     React.createElement('i', { 'data-lucide': "Info", className: "w-5 h-5 mr-2 text-blue-500" }),
@@ -335,8 +329,7 @@ export function CompoundInterestCalculator() {
                 )
               )
             ),
-            // ...las otras pestañas (Gráficos, Escenarios, Análisis) igual que antes...
-            activeTab === 'chart' && (
+            activeTab === 'chart' && ResponsiveContainer ? (
               React.createElement('div', { className: "space-y-6" },
                 React.createElement('div', { className: "bg-white rounded-xl shadow-lg p-6" },
                   React.createElement('h3', { className: "text-xl font-semibold text-gray-800 mb-4" }, "Evolución de la Inversión"),
@@ -417,8 +410,12 @@ export function CompoundInterestCalculator() {
                   )
                 )
               )
+            ) : activeTab === 'chart' && (
+              React.createElement('div', { className: "bg-white rounded-xl shadow-lg p-6" },
+                React.createElement('p', { className: "text-red-600" }, "Error: Recharts no está cargado. Asegúrate de incluir el script de Recharts en index.html.")
+              )
             ),
-            activeTab === 'scenarios' && (
+            activeTab === 'scenarios' && ResponsiveContainer ? (
               React.createElement('div', { className: "space-y-6" },
                 React.createElement('div', { className: "bg-white rounded-xl shadow-lg p-6" },
                   React.createElement('h3', { className: "text-xl font-semibold text-gray-800 mb-4" }, "Comparación de Escenarios de Rentabilidad"),
@@ -466,8 +463,12 @@ export function CompoundInterestCalculator() {
                   )
                 )
               )
+            ) : activeTab === 'scenarios' && (
+              React.createElement('div', { className: "bg-white rounded-xl shadow-lg p-6" },
+                React.createElement('p', { className: "text-red-600" }, "Error: Recharts no está cargado. Asegúrate de incluir el script de Recharts en index.html.")
+              )
             ),
-            activeTab === 'analysis' && (
+            activeTab === 'analysis' && ResponsiveContainer ? (
               React.createElement('div', { className: "space-y-6" },
                 React.createElement('div', { className: "bg-white rounded-xl shadow-lg p-6" },
                   React.createElement('h3', { className: "text-xl font-semibold text-gray-800 mb-4" }, "Composición Final de la Inversión"),
@@ -545,6 +546,10 @@ export function CompoundInterestCalculator() {
                     )
                   )
                 )
+              )
+            ) : activeTab === 'analysis' && (
+              React.createElement('div', { className: "bg-white rounded-xl shadow-lg p-6" },
+                React.createElement('p', { className: "text-red-600" }, "Error: Recharts no está cargado. Asegúrate de incluir el script de Recharts en index.html.")
               )
             )
           )
