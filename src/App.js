@@ -10,7 +10,9 @@ export function CompoundInterestCalculator() {
   const [activeTab, setActiveTab] = React.useState('calculator');
 
   React.useEffect(() => {
-    window.Lucide && window.Lucide.createIcons();
+    if (window.Lucide && window.Lucide.createIcons) {
+      window.Lucide.createIcons();
+    }
   }, [activeTab]);
 
   function formatCurrency(amount) {
@@ -131,7 +133,32 @@ export function CompoundInterestCalculator() {
     Cell
   } = window.Recharts || {};
 
-  // Helper para crear los tabs con menos repetición
+  // Comprobación de seguridad para evitar errores si Recharts no carga correctamente
+  if (
+    !ResponsiveContainer ||
+    !AreaChart ||
+    !CartesianGrid ||
+    !XAxis ||
+    !YAxis ||
+    !Tooltip ||
+    !Legend ||
+    !Area ||
+    !Line ||
+    !LineChart ||
+    !BarChart ||
+    !Bar ||
+    !PieChart ||
+    !Pie ||
+    !Cell
+  ) {
+    console.error("Recharts UMD no se ha cargado correctamente:", window.Recharts);
+    return React.createElement('div', { className: "p-8 bg-red-100 text-red-800 rounded" },
+      "¡Error crítico! Recharts no se ha cargado. ",
+      "Verifica que en el <head> SOLO tienes React 17 y Recharts, y que la red carga bien la UMD. ",
+      "No uses React 18 ni versiones duplicadas."
+    );
+  }
+
   function TabButton(tab) {
     return React.createElement('button', {
       key: tab.id,
