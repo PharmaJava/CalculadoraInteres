@@ -4,14 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Calculadora de Interés Compuesto</title>
-  <!-- Tailwind CSS CDN (solo para demos) -->
+  <!-- Tailwind CSS CDN (solo para demos, no recomendado en producción real) -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- React y ReactDOM -->
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <!-- Babel para JSX en el navegador (solo para demos, no usar en producción real) -->
+  <!-- React y ReactDOM v17 (compatibles con Recharts UMD 1.8.5) -->
+  <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+  <!-- Babel para JSX en el navegador (solo para demos) -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <!-- Recharts UMD v1.8.5 (compatible con React 18 para uso en navegador) -->
+  <!-- Recharts UMD v1.8.5 -->
   <script src="https://unpkg.com/recharts@1.8.5/umd/Recharts.min.js"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@0.323.0/dist/umd/lucide.min.js"></script>
@@ -23,7 +23,7 @@
 <body>
   <div id="root"></div>
   <script type="text/babel">
-    // Aseguramos que Recharts se haya cargado correctamente
+    // Verifica que Recharts se haya cargado correctamente
     if (!window.Recharts) {
       alert("¡No se pudo cargar Recharts! Revisa la URL del script o tu conexión.");
     }
@@ -61,18 +61,16 @@
         Lucide.createIcons();
       }, [activeTab]);
 
-      const formatCurrency = (amount) => {
-        return new Intl.NumberFormat('es-ES', {
+      const formatCurrency = (amount) =>
+        new Intl.NumberFormat('es-ES', {
           style: 'currency',
           currency: 'EUR',
           minimumFractionDigits: 0,
           maximumFractionDigits: 0
         }).format(amount);
-      };
 
-      const formatNumber = (num) => {
-        return new Intl.NumberFormat('es-ES').format(Math.round(num));
-      };
+      const formatNumber = (num) =>
+        new Intl.NumberFormat('es-ES').format(Math.round(num));
 
       const calculations = React.useMemo(() => {
         const monthlyRate = inputs.annualReturn / 100 / 12;
