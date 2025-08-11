@@ -29,11 +29,7 @@
 <body>
   <div id="root"></div>
 
-  <script type="text/babel">
-    // Initialize Lucide icons
-    Lucide.createIcons();
-
-    // Compound Interest Calculator Component
+  <script type="text/babel">// Compound Interest Calculator Component
     const CompoundInterestCalculator = () => {
       const [inputs, setInputs] = React.useState({
         initialAmount: 10000,
@@ -44,6 +40,11 @@
       });
 
       const [activeTab, setActiveTab] = React.useState('calculator');
+
+    // Inicializar Lucide después de renderizar
+    React.useEffect(() => {
+      Lucide.createIcons();
+    }, [activeTab]);
 
       const formatCurrency = (amount) => {
         return new Intl.NumberFormat('es-ES', {
