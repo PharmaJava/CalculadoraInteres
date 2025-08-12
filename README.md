@@ -1,2 +1,0 @@
-# CalculadoraInteres
-Calculadora interes compuesto
